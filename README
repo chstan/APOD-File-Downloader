@@ -1,6 +1,6 @@
 You can run the project from the command line with
 	"ruby apod.rb"
 
-The program will stop searching for images on the site whenever it encounters one that is already in its index, after which point it will proceed to download only the images it cannot find in Pictures/. A current bug means that Net:HTTP times out during the download process. You can just restart the script and it will pick up where it left off.
+The program will stop searching for images on the site whenever it encounters one that is already in its index, after which point it will proceed to download only the images it cannot find in Pictures/.
 
 Because this script downloads some gigabytes of data, it may take a few hours to run, depending on your local internet connectivity.
