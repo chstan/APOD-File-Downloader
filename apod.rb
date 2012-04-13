@@ -5,20 +5,32 @@ $precursor = "http://"
 $base = 'apod.nasa.gov'
 $mid = '/apod/'
 
+def downloadSingleFile filename, title, http
+  begin
+    remoteImage = http.get("#{$mid}#{filename}")
+    open("Pictures/#{title}", "wb") { |f| 
+      f.write(remoteImage.body)
+    }
+    return true
+  rescue
+    return false
+  end
+end
+
 def downloadFiles indexPath
   index = open(indexPath, 'r').readlines
   Net::HTTP.start("#{$base}") { |http|
+    http.read_timeout = 1000
     index.each do |currentUrlUnsafe|
       currentUrl = currentUrlUnsafe.scan(/.*\.jpg/)[0]
       title = currentUrl.scan(/[^\/]*\.jpg/)
       if File.exists?("Pictures/#{title}")
         puts "Found file: Pictures/#{title}. Not downloading."
       else
-        puts "Could not find file: Pictures/#{title}. Downloading."
-        remoteImage = http.get("#{$mid}#{currentUrl}")
-        open("Pictures/#{title}", "wb") { |f|
-          f.write(remoteImage.body)
-        }
+        while(!File.exists?("Pictures/#{title}"))
+          downloadSingleFile currentUrl, title, http
+        end
+        puts "Could not find file: Pictures/#{title}. Downloaded."
       end
     end
   }
